@@ -1,3 +1,4 @@
 using DrWatson
 @quickactivate "ACRM.jl"
-DrWatson.greet()
+include(srcdir("ACRM.jl"))
+
