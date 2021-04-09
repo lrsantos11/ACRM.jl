@@ -17,6 +17,7 @@ import Base.@kwdef
     date::DateTime = Dates.now()
 end
 ####################################
+
 """
 FindCircumcentermSet(X)
 
@@ -154,51 +155,9 @@ Reflection using any projection function `fproj`
 function Reflection(x,fproj)
     return 2*fproj(x) - x
 end
-####################################
-"""
-        ProjectEpiQuadratic(s,v,α)
-Project ``(s,v) ∈ R^{n+1}`` onto the epigraph of ``f(x) = αx^Tx``, such that ``f(v) '≤ s``.
-"""
-function ProjectEpiQuadratic(s::Number,v::Union{AbstractArray,Number}, α::Number=1.0)
-        if α*dot(v,v) <= s
-                return s, v
-        end
-        #PolynomialCoefficients
-        # a3μ³ + a2μ² + a1μ  + a0 = 0    
-        a0 = s-α*dot(v,v)
-        a1 = 4*α*s + 1.
-        a2 = 4*α^2*s + 4*α
-        a3 = 4*α^2
-        r = roots([a0,a1,a2,a3])
-        indexreal =  findall(x->abs.(x)<1e-12,imag.(r))
-        μ  = (maximum(real.(r[indexreal])))
-        x = 1/(1+2*α*μ ) * v
-        t =  μ + s
-        return t, x
-end
-####################################
-"""
-        ProjectEpiQuadratic(x,α)
-Project ``x = [x₀,t₀] ∈ R^{n+1}`` onto the epigraph of ``f(u) = αu^Tu``, such that ``f(x₀) '≤ t₀   ``.
-"""
-function ProjectEpiQuadratic(x::AbstractArray, α::Number=1.0)
-    t, x = ProjectEpiQuadratic(x[end],x[1:end-1], α)
-    return [x;t]
-end
 
 ####################################
-"""
-    ProjectBall(x, v, r)
-Returns the orthogonal projection of `x` onto the L2-Ball  centered in `v` with radius `r`.
-Uses the `ProximalOperators.jl` toolbox
 
-"""
-function ProjectBall(x::Vector, v::Vector, r::Number)
-        Ball = IndBallL2(r)
-        proj, fproj = prox(Translate(Ball,-v),x)
-        return proj
-end
-####################################
 """
 ProjectProdDiagonal(X,num_sets)
 
